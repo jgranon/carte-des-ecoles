@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte des Écoles de France</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar avec filtres -->
+        <aside id="sidebar">
+            <div class="sidebar-header">
+                <h1>Carte des Écoles</h1>
+                <p class="subtitle">Établissements scolaires en France</p>
+            </div>
+
+            <!-- Barre de recherche -->
+            <div class="filter-section">
+                <label for="search">Rechercher un établissement</label>
+                <div class="search-container">
+                    <input type="text" id="search" placeholder="Nom de l'établissement...">
+                    <div id="search-results" class="search-results"></div>
+                </div>
+            </div>
+
+            <!-- Filtres par type -->
+            <div class="filter-section">
+                <label>Type d'établissement</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="filter-ecole" checked>
+                        <span class="checkmark"></span>
+                        Écoles
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="filter-college" checked>
+                        <span class="checkmark"></span>
+                        Collèges
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="filter-lycee" checked>
+                        <span class="checkmark"></span>
+                        Lycées
+                    </label>
+                </div>
+            </div>
+
+            <!-- Filtres par secteur -->
+            <div class="filter-section">
+                <label>Secteur</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="filter-public" checked>
+                        <span class="checkmark"></span>
+                        Public
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="filter-prive" checked>
+                        <span class="checkmark"></span>
+                        Privé
+                    </label>
+                </div>
+            </div>
+
+            <!-- Filtre par classement -->
+            <div class="filter-section">
+                <label for="filter-classement">Classement</label>
+                <select id="filter-classement">
+                    <option value="tous">Tous</option>
+                    <option value="top_1">Top 1%</option>
+                    <option value="top_5">Top 5%</option>
+                    <option value="top_10">Top 10%</option>
+                    <option value="top_25">Top 25%</option>
+                    <option value="top_50">Top 50%</option>
+                    <option value="bottom_50">Bottom 50%</option>
+                    <option value="bottom_25">Bottom 25%</option>
+                    <option value="bottom_10">Bottom 10%</option>
+                </select>
+            </div>
+
+            <!-- Filtre par région -->
+            <div class="filter-section">
+                <label for="filter-region">Région</label>
+                <select id="filter-region">
+                    <option value="tous">Toutes les régions</option>
+                </select>
+            </div>
+
+            <!-- Filtre par département -->
+            <div class="filter-section">
+                <label for="filter-departement">Département</label>
+                <select id="filter-departement">
+                    <option value="tous">Tous les départements</option>
+                </select>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="stats-section">
+                <h3>Statistiques</h3>
+                <div id="stats-content">
+                    <p><span id="stats-count">0</span> établissements affichés</p>
+                    <p>Score moyen: <span id="stats-moyenne">-</span></p>
+                </div>
+            </div>
+
+            <!-- Légende -->
+            <div class="legend-section">
+                <h3>Légende</h3>
+                <div class="legend">
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #1a9641;"></span>
+                        <span>Top 10%</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #a6d96a;"></span>
+                        <span>Top 25%</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #ffffbf;"></span>
+                        <span>Top 50%</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #fdae61;"></span>
+                        <span>Bottom 50%</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color" style="background: #d7191c;"></span>
+                        <span>Bottom 25%</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Carte -->
+        <main id="map-container">
+            <div id="map"></div>
+            <div id="loading" class="loading">
+                <div class="spinner"></div>
+                <p>Chargement des données...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Leaflet MarkerCluster JS -->
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
+    <!-- Application JS -->
+    <script src="js/utils.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

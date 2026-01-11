@@ -1,0 +1,11 @@
+# Données sources (fichiers volumineux)
+*.csv
+
+# Dossier Claude
+.claude/
+
+# macOS
+.DS_Store
+
+# Node modules (si présent)
+node_modules/
