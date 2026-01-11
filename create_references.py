@@ -87,7 +87,7 @@ def calculate_references(etablissements):
         }
     }
 
-    # Collèges - Score composite (60% réussite + 40% mentions TB)
+    # Collèges - Score composite (réussite × note écrit) - pour classement uniquement
     score_colleges_all = [e['scores']['score_composite'] for e in colleges if e['scores'].get('score_composite')]
     score_colleges_public = [e['scores']['score_composite'] for e in colleges if e['scores'].get('score_composite') and e['secteur'] == 'public']
     score_colleges_prive = [e['scores']['score_composite'] for e in colleges if e['scores'].get('score_composite') and e['secteur'] == 'prive']
@@ -115,7 +115,7 @@ def calculate_references(etablissements):
         }
     }
 
-    # Lycées - Score composite (60% réussite + 40% mentions TB)
+    # Lycées - Score composite (réussite toutes séries × mentions toutes séries)
     score_lycees_all = [e['scores']['score_composite'] for e in lycees if e['scores'].get('score_composite')]
     score_lycees_public = [e['scores']['score_composite'] for e in lycees if e['scores'].get('score_composite') and e['secteur'] == 'public']
     score_lycees_prive = [e['scores']['score_composite'] for e in lycees if e['scores'].get('score_composite') and e['secteur'] == 'prive']
@@ -225,12 +225,12 @@ def main():
     print(f"  - Public: {nat['ecoles']['ips']['public']['moyenne']}")
     print(f"  - Privé: {nat['ecoles']['ips']['prive']['moyenne']}")
 
-    print("\nCollèges (Score composite 60% réussite + 40% TB):")
+    print("\nCollèges (Score composite réussite × note écrit):")
     print(f"  - Tous: {nat['colleges']['score_composite']['tous']['moyenne']}")
     print(f"  - Public: {nat['colleges']['score_composite']['public']['moyenne']}")
     print(f"  - Privé: {nat['colleges']['score_composite']['prive']['moyenne']}")
 
-    print("\nLycées (Score composite 60% réussite + 40% TB):")
+    print("\nLycées (Score composite réussite × mentions toutes séries):")
     print(f"  - Tous: {nat['lycees']['score_composite']['tous']['moyenne']}")
     print(f"  - Public: {nat['lycees']['score_composite']['public']['moyenne']}")
     print(f"  - Privé: {nat['lycees']['score_composite']['prive']['moyenne']}")

@@ -185,10 +185,13 @@ const MapManager = {
             'prive': 'Privé'
         };
 
-        // Tooltip pour expliquer le score
+        // Tooltip pour expliquer le score (écoles et lycées uniquement)
         const scoreTooltip = etab.type === 'ecole'
             ? "Indice de Position Sociale : indicateur synthétique du niveau socio-économique des élèves"
-            : "Score composite = taux de réussite × taux de mentions Très Bien";
+            : "Score composite = taux de réussite × taux de mentions (toutes séries)";
+
+        // N'afficher le score que pour les écoles (IPS). Pour collèges/lycées, le score sert uniquement au classement.
+        const showScore = etab.type === 'ecole';
 
         // Taux de réussite pour collèges et lycées
         let tauxReussiteHtml = '';
@@ -275,21 +278,25 @@ const MapManager = {
             <div class="popup-location">
                 ${etab.commune}, ${etab.departement}
             </div>
+            <div class="popup-ranking-main ${rankingCategory}">
+                <div class="popup-ranking-label">${rankingLabel}</div>
+                ${etab.rang ? `<div class="popup-rang-main">${etab.rang}<sup>${this.getOrdinalSuffix(etab.rang)}</sup> <span class="popup-rang-total">/ ${etab.total_type.toLocaleString('fr-FR')}</span></div>` : ''}
+            </div>
+            ${showScore ? `
             <div class="popup-score" title="${scoreTooltip}">
                 <div class="popup-score-label">${scoreLabel} <span class="info-icon">ⓘ</span></div>
                 <span class="popup-score-value">${Utils.formatNumber(score)}</span>
                 <span class="popup-score-unit">${scoreUnit}</span>
             </div>
+            ` : ''}
             ${tauxReussiteHtml}
             ${mentionsHtml}
-            <div class="popup-ranking ${rankingCategory}">
-                ${rankingLabel}
-                ${etab.rang ? `<div class="popup-rang">${etab.rang}<sup>${this.getOrdinalSuffix(etab.rang)}</sup> / ${etab.total_type.toLocaleString('fr-FR')}</div>` : ''}
-            </div>
+            ${showScore ? `
             <div class="popup-comparison">
                 <p>Moyenne nationale : ${Utils.formatNumber(nationalAvg)}${scoreUnit}</p>
                 ${deptAvg ? `<p>Moyenne ${etab.departement} : ${Utils.formatNumber(deptAvg)}${scoreUnit}</p>` : ''}
             </div>
+            ` : ''}
         `;
     },
 

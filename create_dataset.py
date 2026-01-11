@@ -107,13 +107,16 @@ def process_colleges(data):
         nb_mentions_tb = parse_int(row.get('Nb mentions TB G'))
         nb_candidats = parse_int(row.get('Nb candidats G'))
 
-        # Calculer le taux de mentions TB et le score composite
+        # Calculer le taux de mentions TB
         taux_mentions_tb = None
-        score_composite = None
         if nb_candidats and nb_candidats > 0 and nb_mentions_tb is not None:
             taux_mentions_tb = round((nb_mentions_tb / nb_candidats) * 100, 2)
-            # Score = taux de réussite × taux de mentions TB
-            score_composite = round((taux_reussite * taux_mentions_tb) / 100, 2)
+
+        # Score composite pour le classement = taux de réussite × note à l'écrit
+        note_ecrit = parse_float(row.get('Note à l\'écrit G'))
+        score_composite = None
+        if taux_reussite and note_ecrit:
+            score_composite = round(taux_reussite * note_ecrit, 2)
 
         etablissement = {
             'uai': uai,
@@ -132,7 +135,7 @@ def process_colleges(data):
                 'taux_mentions_tb': taux_mentions_tb,
                 'score_composite': score_composite,
                 'nb_candidats': nb_candidats,
-                'note_ecrit': parse_float(row.get('Note à l\'écrit G'))
+                'note_ecrit': note_ecrit
             },
             'mentions': {
                 'nb_mentions_ab': nb_mentions_ab,
@@ -178,14 +181,18 @@ def process_lycees(data):
         nb_b = parse_int(row.get('Nombre de mentions B - G'))
         nb_ab = parse_int(row.get('Nombre de mentions AB - G'))
 
-        # Calculer le taux de mentions TB et le score composite
+        # Calculer le taux de mentions TB (bac général)
         taux_mentions_tb = None
-        score_composite = None
         nb_mentions_tb_total = (nb_tb_fel or 0) + (nb_tb or 0)
         if nb_presents and nb_presents > 0 and nb_mentions_tb_total > 0:
             taux_mentions_tb = round((nb_mentions_tb_total / nb_presents) * 100, 2)
-            # Score = taux de réussite × taux de mentions TB
-            score_composite = round((taux_reussite * taux_mentions_tb) / 100, 2)
+
+        # Score composite pour le classement = taux réussite toutes séries × taux mentions toutes séries
+        taux_reussite_toutes = parse_float(row.get('Taux de réussite - Toutes séries'))
+        taux_mentions_toutes = parse_float(row.get('Taux de mentions - Toutes séries'))
+        score_composite = None
+        if taux_reussite_toutes and taux_mentions_toutes:
+            score_composite = round((taux_reussite_toutes * taux_mentions_toutes) / 100, 2)
 
         etablissement = {
             'uai': uai,
@@ -296,7 +303,7 @@ def main():
         etab['total_type'] = len(ecoles_with_score)
     print(f"  - Écoles classées: {len(ecoles_with_score)}")
 
-    # Collèges : rang basé sur score_composite (réussite × mentions TB)
+    # Collèges : rang basé sur score_composite (réussite × note écrit)
     colleges_with_score = [(e, e['scores']['score_composite']) for e in colleges if e['scores'].get('score_composite') is not None]
     colleges_with_score.sort(key=lambda x: x[1], reverse=True)
     for rank, (etab, _) in enumerate(colleges_with_score, 1):
@@ -304,7 +311,7 @@ def main():
         etab['total_type'] = len(colleges_with_score)
     print(f"  - Collèges classés: {len(colleges_with_score)}")
 
-    # Lycées : rang basé sur score_composite (réussite × mentions TB)
+    # Lycées : rang basé sur score_composite (réussite toutes séries × mentions toutes séries)
     lycees_with_score = [(e, e['scores']['score_composite']) for e in lycees if e['scores'].get('score_composite') is not None]
     lycees_with_score.sort(key=lambda x: x[1], reverse=True)
     for rank, (etab, _) in enumerate(lycees_with_score, 1):
