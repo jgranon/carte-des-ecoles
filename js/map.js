@@ -16,7 +16,9 @@ const MapManager = {
             center: [46.603354, 1.888334],
             zoom: 6,
             minZoom: 5,
-            maxZoom: 18
+            maxZoom: 18,
+            tap: true,
+            tapTolerance: 15
         });
 
         // Ajouter les tuiles OpenStreetMap
@@ -31,10 +33,70 @@ const MapManager = {
             spiderfyOnMaxZoom: true,
             showCoverageOnHover: false,
             zoomToBoundsOnClick: true,
-            disableClusteringAtZoom: 15
+            disableClusteringAtZoom: 14,
+            spiderfyDistanceMultiplier: 1.5
         });
 
         this.map.addLayer(this.markers);
+
+        // Initialiser le bouton de géolocalisation
+        this.initGeolocate();
+    },
+
+    /**
+     * Initialise le bouton de géolocalisation
+     */
+    initGeolocate() {
+        const btn = document.getElementById('geolocate-btn');
+        if (!btn) return;
+
+        this.userLocationMarker = null;
+
+        btn.addEventListener('click', () => {
+            if (!navigator.geolocation) {
+                alert('La géolocalisation n\'est pas supportée par votre navigateur');
+                return;
+            }
+
+            btn.classList.add('loading');
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    btn.classList.remove('loading');
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    // Centrer la carte
+                    this.map.setView([lat, lon], 14);
+
+                    // Ajouter/déplacer le marqueur de position
+                    if (this.userLocationMarker) {
+                        this.userLocationMarker.setLatLng([lat, lon]);
+                    } else {
+                        const icon = L.divIcon({
+                            className: 'user-location-marker',
+                            html: '<div class="user-location-dot"></div>',
+                            iconSize: [20, 20],
+                            iconAnchor: [10, 10]
+                        });
+                        this.userLocationMarker = L.marker([lat, lon], { icon }).addTo(this.map);
+                    }
+                },
+                (error) => {
+                    btn.classList.remove('loading');
+                    let message = 'Impossible de vous localiser';
+                    if (error.code === error.PERMISSION_DENIED) {
+                        message = 'Vous avez refusé la géolocalisation';
+                    }
+                    alert(message);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 60000
+                }
+            );
+        });
     },
 
     /**
@@ -88,6 +150,14 @@ const MapManager = {
             marker.bindPopup(() => this.createGroupPopupContent(group, references), {
                 maxWidth: 320,
                 className: group.length > 1 ? 'popup-with-tabs' : ''
+            });
+
+            // Sur mobile, ouvrir notre modal personnalisée au lieu du popup Leaflet
+            marker.on('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    e.originalEvent?.preventDefault();
+                    this.openMobileModal(group, references);
+                }
             });
 
             this.allMarkers.push(marker);
@@ -350,5 +420,43 @@ const MapManager = {
     getOrdinalSuffix(n) {
         if (n === 1) return 'er';
         return 'e';
+    },
+
+    /**
+     * Ouvre la modal mobile avec la fiche établissement
+     */
+    openMobileModal(group, references) {
+        const modal = document.getElementById('mobile-etab-modal');
+        const content = document.getElementById('mobile-etab-content');
+
+        if (!modal || !content) return;
+
+        // Générer le contenu
+        const html = this.createGroupPopupContent(group, references);
+        content.innerHTML = `<div class="popup-content">${html}</div>`;
+
+        // Ouvrir la modal
+        modal.classList.add('open');
+
+        // Gérer le bouton retour
+        const backBtn = modal.querySelector('.mobile-modal-back');
+        if (backBtn) {
+            backBtn.onclick = () => {
+                modal.classList.remove('open');
+            };
+        }
+
+        // Gérer les onglets si présents
+        setTimeout(() => {
+            content.querySelectorAll('.popup-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    const index = e.target.dataset.index;
+                    content.querySelectorAll('.popup-tab').forEach(t => t.classList.remove('active'));
+                    content.querySelectorAll('.popup-tab-content').forEach(c => c.classList.remove('active'));
+                    e.target.classList.add('active');
+                    content.querySelector(`.popup-tab-content[data-index="${index}"]`)?.classList.add('active');
+                });
+            });
+        }, 10);
     }
 };

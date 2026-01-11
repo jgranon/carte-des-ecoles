@@ -15,7 +15,164 @@
 </head>
 <body>
     <div id="app">
-        <!-- Sidebar avec filtres -->
+        <!-- Barre mobile en haut -->
+        <div id="mobile-header">
+            <button id="mobile-search-btn" aria-label="Rechercher">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span>Rechercher...</span>
+            </button>
+            <button id="mobile-filters-btn" aria-label="Filtres">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="4" y1="6" x2="20" y2="6"></line>
+                    <line x1="4" y1="12" x2="20" y2="12"></line>
+                    <line x1="4" y1="18" x2="20" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal recherche mobile -->
+        <div id="mobile-search-modal" class="mobile-modal">
+            <div class="mobile-modal-header">
+                <button class="mobile-modal-back" aria-label="Retour">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <input type="text" id="mobile-search-input" placeholder="Rechercher un établissement...">
+            </div>
+            <div id="mobile-search-results" class="mobile-search-results"></div>
+        </div>
+
+        <!-- Modal fiche établissement mobile -->
+        <div id="mobile-etab-modal" class="mobile-modal">
+            <div class="mobile-modal-header">
+                <button class="mobile-modal-back" aria-label="Retour">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <span class="mobile-modal-title">Fiche établissement</span>
+            </div>
+            <div id="mobile-etab-content" class="mobile-etab-content"></div>
+        </div>
+
+        <!-- Modal filtres mobile -->
+        <div id="mobile-filters-modal" class="mobile-modal">
+            <div class="mobile-modal-header">
+                <button class="mobile-modal-back" aria-label="Retour">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </button>
+                <span class="mobile-modal-title">Filtres</span>
+                <button id="mobile-filters-reset" class="mobile-modal-action">Réinitialiser</button>
+            </div>
+            <div class="mobile-filters-content">
+                <!-- Type d'établissement -->
+                <div class="mobile-filter-section open">
+                    <button class="mobile-filter-header">
+                        <span>Type d'établissement</span>
+                        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="mobile-filter-body">
+                        <label class="mobile-checkbox">
+                            <input type="checkbox" data-filter="filter-ecole" checked>
+                            <span>Écoles</span>
+                        </label>
+                        <label class="mobile-checkbox">
+                            <input type="checkbox" data-filter="filter-college" checked>
+                            <span>Collèges</span>
+                        </label>
+                        <label class="mobile-checkbox">
+                            <input type="checkbox" data-filter="filter-lycee" checked>
+                            <span>Lycées</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- Secteur -->
+                <div class="mobile-filter-section">
+                    <button class="mobile-filter-header">
+                        <span>Secteur</span>
+                        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="mobile-filter-body">
+                        <label class="mobile-checkbox">
+                            <input type="checkbox" data-filter="filter-public" checked>
+                            <span>Public</span>
+                        </label>
+                        <label class="mobile-checkbox">
+                            <input type="checkbox" data-filter="filter-prive" checked>
+                            <span>Privé</span>
+                        </label>
+                    </div>
+                </div>
+                <!-- Classement -->
+                <div class="mobile-filter-section">
+                    <button class="mobile-filter-header">
+                        <span>Classement</span>
+                        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="mobile-filter-body">
+                        <select id="mobile-filter-classement" class="mobile-select">
+                            <option value="tous">Tous</option>
+                            <option value="top_1">Top 1%</option>
+                            <option value="top_5">Top 5%</option>
+                            <option value="top_10">Top 10%</option>
+                            <option value="top_25">Top 25%</option>
+                            <option value="top_50">Top 50%</option>
+                            <option value="bottom_50">Bottom 50%</option>
+                            <option value="bottom_25">Bottom 25%</option>
+                            <option value="bottom_10">Bottom 10%</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Région -->
+                <div class="mobile-filter-section">
+                    <button class="mobile-filter-header">
+                        <span>Région</span>
+                        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="mobile-filter-body">
+                        <select id="mobile-filter-region" class="mobile-select">
+                            <option value="tous">Toutes les régions</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Département -->
+                <div class="mobile-filter-section">
+                    <button class="mobile-filter-header">
+                        <span>Département</span>
+                        <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </button>
+                    <div class="mobile-filter-body">
+                        <select id="mobile-filter-departement" class="mobile-select">
+                            <option value="tous">Tous les départements</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="mobile-filters-footer">
+                <button id="mobile-filters-apply">Appliquer les filtres</button>
+            </div>
+        </div>
+
+        <!-- Sidebar avec filtres (desktop uniquement) -->
         <aside id="sidebar">
             <div class="sidebar-header">
                 <h1>Carte des Écoles</h1>
@@ -142,6 +299,12 @@
         <!-- Carte -->
         <main id="map-container">
             <div id="map"></div>
+            <button id="geolocate-btn" class="geolocate-btn" title="Ma position">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M12 2v4m0 12v4m-10-10h4m12 0h4"></path>
+                </svg>
+            </button>
             <div id="loading" class="loading">
                 <div class="spinner"></div>
                 <p>Chargement des données...</p>
